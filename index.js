@@ -34,7 +34,10 @@ app.use('/docs', express.static(path.join(__dirname, 'docs')));
 // Prefer JSON spec for Swagger UI to avoid YAML parsing/version issues
 // Disable Helmet's contentSecurityPolicy for the docs route so Swagger UI can load
 // (CSP can block inline scripts/styles that swagger-ui-express relies on)
-app.use('/api-docs', helmet({ contentSecurityPolicy: false }), swaggerUi.serve, swaggerUi.setup({ swaggerUrl: swaggerSpec }));
+// app.use('/api-docs', helmet({ contentSecurityPolicy: false }), swaggerUi.serve, swaggerUi.setup({ swaggerUrl: swaggerSpec }));
+app.get('/api-docs', (req, res) => {
+  res.redirect('https://app.swaggerhub.com/apis-docs/byarak/agroindustrial-supply-chain-api/1.0.0?view=uiDocs')
+});
 
 // Default route
 app.use('/api', routes);
