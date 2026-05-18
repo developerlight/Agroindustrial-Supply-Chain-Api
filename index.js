@@ -28,12 +28,15 @@ app.use(morgan('dev'));
 // Routes
 // app.use('/api/products', productRoutes);
 
+// Load OpenAPI spec
+const swaggerSpec = require('./docs/openapi.json');
+
 // Serve OpenAPI YAML as static and mount Swagger UI
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
 // Prefer JSON spec for Swagger UI to avoid YAML parsing/version issues
 // Disable Helmet's contentSecurityPolicy for the docs route so Swagger UI can load
 // (CSP can block inline scripts/styles that swagger-ui-express relies on)
-app.use('/api-docs', helmet({ contentSecurityPolicy: false }), swaggerUi.serve, swaggerUi.setup(null, { swaggerUrl: '/docs/openapi.json' }));
+app.use('/api-docs', helmet({ contentSecurityPolicy: false }), swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Default route
 app.use('/api', routes);
