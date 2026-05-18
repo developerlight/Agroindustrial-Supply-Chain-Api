@@ -1,0 +1,276 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Agroindustrial Supply Chain API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for the Agroindustrial Supply Chain API."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string" },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "AuthRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" },
+          "role": { "type": "string", "enum": ["farmer", "distributor", "admin"] }
+        },
+        "required": ["email", "password", "role"]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": { "type": "object" },
+              "token": { "type": "string" }
+            }
+          }
+        }
+      },
+      "Farmer": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string" },
+          "farmName": { "type": "string" },
+          "location": {
+            "type": "object",
+            "properties": {
+              "address": { "type": "string" },
+              "city": { "type": "string" },
+              "province": { "type": "string" },
+              "country": { "type": "string" }
+            }
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "phone": { "type": "string" },
+              "email": { "type": "string" }
+            }
+          },
+          "role": { "type": "string", "enum": ["farmer", "distributor", "admin"] },
+          "products": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Distributor": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["Distributor", "Retailer"] },
+          "location": { "type": "object" },
+          "contact": { "type": "object" },
+          "role": { "type": "string", "enum": ["farmer", "distributor", "admin"] }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "unit": { "type": "string" },
+          "pricePerUnit": { "type": "number" },
+          "quantityAvailable": { "type": "number" },
+          "harvestDate": { "type": "string", "format": "date-time" },
+          "farmerId": { "type": "string" }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "productId": { "type": "string" },
+          "buyerId": { "type": "string" },
+          "quantity": { "type": "number" },
+          "totalPrice": { "type": "number" },
+          "status": { "type": "string", "enum": ["pending", "shipped", "delivered", "cancelled"] },
+          "orderDate": { "type": "string", "format": "date-time" },
+          "deliveryDate": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Shipment": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "orderId": { "type": "string" },
+          "distributorId": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "in_transit", "delivered"] },
+          "pickupDate": { "type": "string", "format": "date-time" },
+          "deliveryDate": { "type": "string", "format": "date-time" },
+          "vehicleInfo": {
+            "type": "object",
+            "properties": {
+              "vehicleType": { "type": "string" },
+              "plateNumber": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "role": { "type": "string", "enum": ["farmer", "distributor", "admin"] }
+                },
+                "required": ["name", "email", "password", "role"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthResponse" } } }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthRequest" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login success", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": { 
+        "summary": "Get current user", 
+        "security": [{ "bearerAuth": [] }], 
+        "responses": { 
+            "200": { 
+                "description": "Current user", 
+                "content": { 
+                    "application/json": { 
+                        "schema": { 
+                            "type": "object", 
+                            "properties": { 
+                                "success": { "type": "boolean" }, 
+                                "data": { "type": "object" } 
+                                } 
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/farmers": {
+      "get": { "summary": "List farmers", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Array of farmers", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Farmer" } } } } } } } } },
+      "post": { "summary": "Create farmer (admin only)", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Farmer" } } } }, "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Farmer" } } } } } }
+    },
+    "/farmers/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "summary": "Get farmer by id", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Farmer", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Farmer" } } } } } },
+      "put": { "summary": "Update farmer", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Farmer" } } } }, "responses": { "200": { "description": "Updated farmer", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Farmer" } } } } },
+      "delete": { "summary": "Delete farmer", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } } } } }
+    },
+    "/distributors": {
+      "get": { "summary": "List distributors", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Array of distributors", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Distributor" } } } } } } } } },
+      "post": { "summary": "Create distributor", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Distributor" } } } }, "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Distributor" } } } } } }
+    },
+    "/distributors/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "summary": "Get distributor by id", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Distributor", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Distributor" } } } } } },
+      "put": { "summary": "Update distributor", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Distributor" } } } }, "responses": { "200": { "description": "Updated distributor", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Distributor" } } } } } },
+      "delete": { "summary": "Delete distributor", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } } } }
+    },
+    "/products": {
+      "get": { "summary": "List products", "responses": { "200": { "description": "Array of products", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } } } } } } } } },
+      "post": { "summary": "Create product", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } }, "responses": { "201": { "description": "Created product", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } } }
+    },
+    "/products/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "summary": "Get product by id", "responses": { "200": { "description": "Product", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } } },
+      "put": { "summary": "Update product", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } }, "responses": { "200": { "description": "Updated product", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } } },
+      "delete": { "summary": "Delete product", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } } } } }
+    },
+    "/orders": {
+      "get": { "summary": "List orders", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Array of orders", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Order" } } } } } } } } },
+      "post": { "summary": "Create order", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "productId": { "type": "string" }, "quantity": { "type": "number" }, "deliveryDate": { "type": "string", "format": "date-time" } }, "required": ["productId", "quantity"] } } } }, "responses": { "201": { "description": "Created order", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } } } }
+    },
+    "/orders/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "summary": "Get order by id", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Order", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } } } },
+      "put": { "summary": "Update order", "security": [{ "bearerAuth": [] }], "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "status": { "type": "string", "enum": ["pending", "shipped", "delivered", "cancelled"] } } } } } }, "responses": { "200": { "description": "Updated order", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } } } },
+      "delete": { "summary": "Delete order", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } } } }
+    },
+    "/shipments": {
+      "get": { "summary": "List shipments", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Array of shipments", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Shipment" } } } } } } } } },
+      "post": { "summary": "Create shipment", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Shipment" } } } }, "responses": { "201": { "description": "Created shipment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Shipment" } } } } } }
+    },
+    "/shipments/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "summary": "Get shipment by id", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Shipment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Shipment" } } } } } },
+      "put": { "summary": "Update shipment", "security": [{ "bearerAuth": [] }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Shipment" } } } }, "responses": { "200": { "description": "Updated shipment", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Shipment" } } } } } },
+      "delete": { "summary": "Delete shipment", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } } } }
+    },
+    "/analytics/sales": { "get": { "summary": "Sales analytics", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Sales analytics", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object" } } } } } } } } },
+    "/analytics/stock": { "get": { "summary": "Stock analytics", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Stock analytics", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object" } } } } } } } },
+    "/analytics/delivery-time": { "get": { "summary": "Delivery time analytics", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Delivery time analytics", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object" } } } } } } } }
+  }
+}
+  }
+}

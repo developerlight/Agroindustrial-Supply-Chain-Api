@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Tomat Merah",
+    "category": "Vegetables",
+    "unit": "kg",
+    "pricePerUnit": 12000,
+    "quantityAvailable": 150,
+    "harvestDate": "2026-04-20T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a01"
+  },
+  {
+    "name": "Cabai Rawit",
+    "category": "Vegetables",
+    "unit": "kg",
+    "pricePerUnit": 45000,
+    "quantityAvailable": 80,
+    "harvestDate": "2026-05-02T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a01"
+  },
+  {
+    "name": "Pisang Ambon",
+    "category": "Fruits",
+    "unit": "kg",
+    "pricePerUnit": 18000,
+    "quantityAvailable": 200,
+    "harvestDate": "2026-04-28T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a02"
+  },
+  {
+    "name": "Apel Malang",
+    "category": "Fruits",
+    "unit": "kg",
+    "pricePerUnit": 30000,
+    "quantityAvailable": 60,
+    "harvestDate": "2026-03-15T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a02"
+  },
+  {
+    "name": "Jagung Kering",
+    "category": "Grains",
+    "unit": "kg",
+    "pricePerUnit": 7000,
+    "quantityAvailable": 1000,
+    "harvestDate": "2026-02-10T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a03"
+  },
+  {
+    "name": "Kedelai Hitam",
+    "category": "Grains",
+    "unit": "kg",
+    "pricePerUnit": 12000,
+    "quantityAvailable": 400,
+    "harvestDate": "2026-01-30T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a03"
+  },
+  {
+    "name": "Susu Segar",
+    "category": "Dairy",
+    "unit": "liter",
+    "pricePerUnit": 10000,
+    "quantityAvailable": 250,
+    "harvestDate": "2026-05-10T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a04"
+  },
+  {
+    "name": "Keju Lokal",
+    "category": "Dairy",
+    "unit": "kg",
+    "pricePerUnit": 75000,
+    "quantityAvailable": 20,
+    "harvestDate": "2026-04-05T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a04"
+  },
+  {
+    "name": "Kentang",
+    "category": "Vegetables",
+    "unit": "kg",
+    "pricePerUnit": 14000,
+    "quantityAvailable": 300,
+    "harvestDate": "2026-03-20T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a01"
+  },
+  {
+    "name": "Wortel",
+    "category": "Vegetables",
+    "unit": "kg",
+    "pricePerUnit": 11000,
+    "quantityAvailable": 220,
+    "harvestDate": "2026-04-12T00:00:00.000Z",
+    "farmerId": "60c72b2f9b1e8a5f3d4c1a02"
+  }
+]
