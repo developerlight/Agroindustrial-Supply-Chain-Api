@@ -11,6 +11,7 @@ const errorMiddleware = require('./middlewares/errorMiddleware');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/openapi.json')
 const path = require('path');
+const pkg = require('./package.json');
 // Routes (sementara placeholder)
 // const productRoutes = require('./routes/productRoutes');
 
