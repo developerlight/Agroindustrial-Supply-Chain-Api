@@ -1,9 +1,22 @@
 // utils/logger.js
 const winston = require('winston');
 const path = require('path');
+const fs = require('fs');
 
-// Lokasi log file
-const logDir = 'logs';
+// Lokasi log file (absolute path to project-level logs folder)
+const logDir = path.join(__dirname, '..', 'logs');
+
+// Pastikan folder log ada (buat rekursif jika perlu)
+if (!fs.existsSync(logDir)) {
+  try {
+    fs.mkdirSync(logDir, { recursive: true });
+  } catch (err) {
+    // Jika pembuatan folder gagal, biarkan winston menangani error selanjutnya
+    // tapi tetap log ke console agar developer tahu
+    // eslint-disable-next-line no-console
+    console.error('Could not create log directory', logDir, err);
+  }
+}
 
 const logger = winston.createLogger({
   level: 'info', // default level
