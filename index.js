@@ -1,7 +1,5 @@
 // server.js
-require('dotenv').config({
-  path: `.env${process.env.NODE_ENV === 'test' ? '.test' : process.env.NODE_ENV === 'development' ? '.dev' : ''}`
-});
+require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/db');
 const morgan = require('morgan');
@@ -18,9 +16,7 @@ const path = require('path');
 const app = express();
 
 // Connect MongoDB (skip when SKIP_DB=true for docs/testing without DB)
-if (!process.env.SKIP_DB || process.env.SKIP_DB === 'false') {
-  connectDB();
-}
+connectDB();
 
 // Middleware global
 app.use(helmet());
