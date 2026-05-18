@@ -41,8 +41,26 @@ app.get('/api-docs', (req, res) => {
 
 // Default route
 app.use('/api', routes);
+// Root: describe the API (JSON) and redirect HTML users to Swagger UI
 app.get('/', (req, res) => {
-  res.send('Agroindustrial Supply Chain API Running');
+  const info = {
+    name: pkg.name || 'Agroindustrial Supply Chain API',
+    version: pkg.version || '1.0.0',
+    description: pkg.description || 'API for managing the agroindustrial supply chain',
+    endpoints: {
+      apiRoot: '/api',
+      docs: '/api-docs',
+    },
+    notes: 'If you open this URL in a browser you will be redirected to the Swagger UI.',
+  };
+
+  // If the client prefers HTML (browser), redirect to the docs UI
+  if (req.accepts && req.accepts('html')) {
+    return res.redirect(302, '/api-docs');
+  }
+
+  // Otherwise return a JSON description suitable for programmatic clients
+  return res.json(info);
 });
 
 
